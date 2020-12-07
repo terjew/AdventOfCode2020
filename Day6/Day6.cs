@@ -21,7 +21,7 @@ namespace Day6
         }
     }
 
-    class Program
+    class Day6
     {
         static void Main(string[] args)
         {
