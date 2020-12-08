@@ -161,10 +161,40 @@ namespace Day8
                     machine.Step();
                 }
                 acAfterFlip = machine.AC;
-            }, 100, 100);
+            }, 100, 10);
+
+            Performance.TimeRun("Alternate solve", () =>
+            {
+                acAfterFlip = SolveAlternate();
+            }, 100, 10);
 
             Console.WriteLine($"AC before flip: {acWithoutFlip}");
             Console.WriteLine($"AC after flip: {acAfterFlip}");
         }
+
+        static int SolveAlternate()
+        {
+            var machine = new Machine(TextFile.ReadStringList("input.txt"));
+            var target = machine.Program.Count;
+            var originalRun = machine.RunFrom(0);
+            foreach (var i in originalRun)
+            {
+                var originalInstruction = machine.Program[i];
+                var flippedInstruction = InstructionFactory.Flip(originalInstruction);
+                machine.Program[i] = flippedInstruction;
+
+                var visited = machine.RunFrom(i);
+                if (visited.Contains(target))
+                {
+                    machine.AC = 0;
+                    machine.PC = 0;
+                    machine.RunFrom(0);
+                    return machine.AC;
+                }
+                machine.Program[i] = originalInstruction;
+            }
+            return -1;
+        }
+
     }
 }
