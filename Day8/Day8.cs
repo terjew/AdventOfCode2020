@@ -129,10 +129,16 @@ namespace Day8
 
                 var target = machine.Program.Count;
                 List<HashSet<int>> successLoops = new List<HashSet<int>>();
+                List<HashSet<int>> failLoops = new List<HashSet<int>>();
                 for (int i = 1; i < machine.Program.Count; i++)
                 {
+                    if (successLoops.Any(l => l.Contains(i)) || failLoops.Any(l => l.Contains(i)))//this instruction is already in a known loop 
+                    {
+                        continue;
+                    }
                     visited = machine.RunFrom(i);
                     if (visited.Contains(target)) successLoops.Add(visited);
+                    else failLoops.Add(visited);
                 }
 
                 machine.AC = 0;
