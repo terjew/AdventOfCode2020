@@ -52,6 +52,7 @@ namespace Day8
             {"acc", typeof(Acc) },
             {"jmp", typeof(Jmp) },
         };
+
         public static Instruction Parse(string s)
         {
             var pair = s.Split(" ");
@@ -108,12 +109,11 @@ namespace Day8
         static int NextIfFlipped(Machine m)
         {
             var instr = m.Program[m.PC];
-            switch (instr)
-            {
-                case Jmp j: return m.PC + 1;
-                case Nop n: return m.PC + n.Argument;
-                default: return m.PC + 1;
-            }
+            var flipped = InstructionFactory.Flip(instr);
+            int pc = m.PC;
+            int ac = 0;
+            flipped.Execute(ref pc, ref ac);
+            return pc;
         }
 
         static void Main(string[] args)
