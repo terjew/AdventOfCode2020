@@ -99,7 +99,7 @@ namespace Day8
                 visited.Add(PC);
                 Step();
             }
-            visited.Add(PC); //reached end
+            visited.Add(PC); //reached end or outside
             return visited;
         }
     }
@@ -128,17 +128,17 @@ namespace Day8
                 acWithoutFlip = machine.AC;
 
                 var target = machine.Program.Count;
-                List<HashSet<int>> successLoops = new List<HashSet<int>>();
-                List<HashSet<int>> failLoops = new List<HashSet<int>>();
+                HashSet<int> knownGood = new HashSet<int>();
+                HashSet<int> knownBad = new HashSet<int>(visited);
                 for (int i = 1; i < machine.Program.Count; i++)
                 {
-                    if (successLoops.Any(l => l.Contains(i)) || failLoops.Any(l => l.Contains(i)))//this instruction is already in a known loop 
+                    if (knownBad.Contains(i) || knownGood.Contains(i))//this instruction has already been visited in a previous path
                     {
                         continue;
                     }
                     visited = machine.RunFrom(i);
-                    if (visited.Contains(target)) successLoops.Add(visited);
-                    else failLoops.Add(visited);
+                    if (visited.Contains(target)) knownGood.UnionWith(visited);
+                    else knownBad.UnionWith(visited);
                 }
 
                 machine.AC = 0;
@@ -149,22 +149,19 @@ namespace Day8
                 {
                     if (!flipped)
                     {
-                        var possibleNext = NextIfFlipped(machine);
-                        foreach (var loop in successLoops)
+                        var candidate = NextIfFlipped(machine);
+                        if (knownGood.Contains(candidate)) //flipping this instructions brings us to a "winning" path
                         {
-                            if (loop.Contains(possibleNext)) //flipping this instructions brings us to a "winning" loop
-                            {
-                                var curr = machine.Program[machine.PC];
-                                var flippedInstruction = InstructionFactory.Flip(curr);
-                                machine.Program[machine.PC] = flippedInstruction;
-                                flipped = true;
-                            }
+                            var curr = machine.Program[machine.PC];
+                            var flippedInstruction = InstructionFactory.Flip(curr);
+                            machine.Program[machine.PC] = flippedInstruction;
+                            flipped = true;
                         }
                     }
                     machine.Step();
                 }
                 acAfterFlip = machine.AC;
-            });
+            }, 100, 100);
 
             Console.WriteLine($"AC before flip: {acWithoutFlip}");
             Console.WriteLine($"AC after flip: {acAfterFlip}");
