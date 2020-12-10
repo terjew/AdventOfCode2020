@@ -89,12 +89,13 @@ namespace Day10
             for (int i = 0; i < len; i++)
             {
                 var to = i;
-                while (++to < len && num[to] <= num[i] + 3)
+                var end = num[i] + 3;
+                while (++to < len && num[to] <= end)
                 {
                     count[to] += count[i];
                 }
             }
-            return count[0];
+            return count[len - 1];
         }
 
         static long Part2Graph(List<int> numbers)
