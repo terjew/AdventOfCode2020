@@ -66,26 +66,48 @@ namespace Day9
             long part1 = 0;
             long part2 = 0;
             List<long> sequence = null;
+
+            Performance.TimeRun("Parse and solve (naive)", () =>
+            {
+                sequence = TextFile.ReadPositiveLongList("input.txt");
+                List<long> dummy = null;
+                part1 = SolvePart1Naive(sequence, 25, ref dummy);
+                part2 = SolvePart2(sequence, part1);
+            }, 100, 1000);
+
+            Performance.TimeRun("Parse (enumerate) and solve (naive)", () =>
+            {
+                var longs = TextFile.EnumeratePositiveLongs("input.txt");
+                part1 = SolvePart1Naive(longs, 25, ref sequence);
+                part2 = SolvePart2(sequence, part1);
+            }, 100, 1000);
+
             Performance.TimeRun("Parse", () =>
             {
                 sequence = TextFile.ReadPositiveLongList("input.txt");
             }, 100, 100);
+
             Performance.TimeRun("Solve part 1 (naive)", () =>
             {
-                part1 = SolvePart1Naive(sequence, 25);
+                List<long> dummy = null;
+                part1 = SolvePart1Naive(sequence, 25, ref dummy);
             }, 100, 100);
+
             Performance.TimeRun("Solve part 1 (ringbuffer)", () =>
             {
                 part1 = SolvePart1Ringbuffer(sequence, 25);
             }, 100, 100);
+
             Performance.TimeRun("Solve part 1 (queues)", () =>
             {
                 part1 = SolvePart1(sequence, 25);
             }, 100, 100);
+
             Performance.TimeRun("Solve part 2", () =>
             {
                 part2 = SolvePart2(sequence, part1);
             }, 100, 10000);
+
             Console.WriteLine($"Found failed checksum: {part1}");
             Console.WriteLine($"Found weakness: {part2}");
         }
@@ -204,13 +226,13 @@ namespace Day9
             return false;
         }
 
-        public static long SolvePart1Naive(List<long> sequence, int preamble)
+        public static long SolvePart1Naive(IEnumerable<long> sequence, int preamble, ref List<long> list)
         {
-
             var window = new RingBuffer2D<long>(preamble, 1);
             int seqNo = 0;
             foreach (long input in sequence)
             {
+                if (list != null) list.Add(input);
                 if (seqNo >= preamble)
                 {
                     if (!HasPairSummingTo(window.Array, input)) return input;

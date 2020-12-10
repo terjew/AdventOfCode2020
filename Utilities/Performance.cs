@@ -16,7 +16,7 @@ namespace Utilities
             {
                 a();
             }
-            double total = 0;
+            long totalTicks = 0;
             for (int run = 0; run < runs; run++)
             {
                 Stopwatch sw = Stopwatch.StartNew();
@@ -25,10 +25,11 @@ namespace Utilities
                     a();
                 }
                 sw.Stop();
-                var ms = sw.ElapsedMilliseconds;
-                total += ms;
+                totalTicks += sw.ElapsedTicks;
             }
-            Console.WriteLine($"{what}: {total} ms total in {runs * loops} iterations ({runs} runs of {loops} loops), {total * 1000 / (runs * loops)} µs/run");
+            double ticksPerSecond = (double)Stopwatch.Frequency;
+
+            Console.WriteLine($"{what}: {totalTicks} ticks total in {runs * loops} iterations ({runs} runs of {loops} loops), {totalTicks * 1000000 / ticksPerSecond  / (runs * loops)} µs/run");
         }
     }
 }

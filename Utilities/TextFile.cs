@@ -42,6 +42,21 @@ namespace Utilities
             return list;
         }
 
+        public static IEnumerable<long> EnumeratePositiveLongs(string path)
+        {
+            using (StreamReader sr = File.OpenText(path))
+            {
+                string s = String.Empty;
+                while ((s = sr.ReadLine()) != null)
+                {
+                    long y = 0;
+                    for (int i = 0; i < s.Length; i++)
+                        y = y * 10 + (s[i] - '0');
+                    yield return y;
+                }
+            }
+        }
+
         public static List<string> ReadStringList(string path)
         {
             List<string> list = new List<string>();
