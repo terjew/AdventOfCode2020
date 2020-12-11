@@ -57,6 +57,12 @@ namespace Utilities
             other.Array.CopyTo(Array, 0);
         }
 
+        
+        
+    }
+
+    public static class MatrixFactory
+    {
         public static Matrix<char> BuildCharMatrix(List<string> input)
         {
             var width = input[0].Length;
@@ -74,12 +80,11 @@ namespace Utilities
             }
             return new Matrix<char>(width, height, array);
         }
-
-        
     }
 
     public static class MatrixExtensions
     {        
+
         public static void Dump(this Matrix<char> charMatrix)
         {
             Console.WriteLine("**************************************");
