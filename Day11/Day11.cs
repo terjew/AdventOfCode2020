@@ -6,71 +6,7 @@ using Utilities;
 
 namespace Day11
 {
-    public class Matrix
-    {
-        public char this[int x, int y]
-        { 
-            get {
-                return Array[y * Width + x];
-            }
-            set {
-                Array[y * Width + x] = value;
-            }
-        }
-
-        public readonly char[] Array;
-        public readonly int Width;
-        public readonly int Height;
-
-        public Matrix(List<string> input)
-        {
-            Width = input[0].Length;
-            Height = input.Count;
-            Array = new char[Width * Height];
-            int lineptr = 0;
-            foreach(var line in input)
-            {
-                int ptr = lineptr;
-                foreach (var c in line)
-                {
-                    Array[ptr++] = c;
-                }
-                lineptr += Width;
-            }
-        }
-
-        private Matrix(Matrix other) {
-            Array = (char[])other.Array.Clone();
-            Width = other.Width;
-            Height = other.Height;
-        }
-
-        public int GetIndex(int x, int y)
-        {
-            return y * Width + x;
-        }
-
-        public Matrix Clone()
-        {
-            return new Matrix(this);
-        }
-
-        public void CopyFrom(Matrix other)
-        {
-            other.Array.CopyTo(Array, 0);
-        }
-
-        public void Dump()
-        {
-            Console.WriteLine("**************************************");
-            for (int i = 0; i < Height; i++)
-            {
-                //FIXME: Use Span<char>
-                var str = new string(Array, Width * i, Width);
-                Console.WriteLine(str);
-            }
-        }
-    }
+    
 
     class Day11
     {
@@ -84,7 +20,7 @@ namespace Day11
             Performance.TimeRun("part1 + 2 (with IO)", () =>
             {
                 var input = TextFile.ReadStringList("input.txt");
-                var matrix = new Matrix(input);
+                var matrix = Matrix<char>.BuildCharMatrix(input);
                 var original = matrix.Clone();
                 (count1, iter1) = SimulateWithAdjecency(matrix);
                 (count2, iter2) = SimulateWithAdjecency(original, adjacencyFunc: FindClosestSeats, crowdedThreshold: 5);
@@ -93,7 +29,7 @@ namespace Day11
             Console.WriteLine($"Part2: {count2} seats end up occupied ({iter2} iterations)");
         }
 
-        static (int,int) SimulateWithAdjecency(Matrix matrix, Func<int, int, Matrix, int[]> adjacencyFunc = null, int crowdedThreshold = 4, bool output = false)
+        static (int,int) SimulateWithAdjecency(Matrix<char> matrix, Func<int, int, Matrix<char>, int[]> adjacencyFunc = null, int crowdedThreshold = 4, bool output = false)
         {
             if (adjacencyFunc == null) adjacencyFunc = FindImmediateNeighbours;
             int[] indices = new int[128*128];             //max 128*128
@@ -171,7 +107,7 @@ namespace Day11
             ( 1,  1),
         };
 
-        private static int[] FindImmediateNeighbours(int x, int y, Matrix matrix)
+        private static int[] FindImmediateNeighbours(int x, int y, Matrix<char> matrix)
         {
             var c = matrix[x, y];
             if (c == '.' || c == '\0') return null;
@@ -191,7 +127,7 @@ namespace Day11
             return list.ToArray();
         }
 
-        private static int[] FindClosestSeats(int x, int y, Matrix matrix)
+        private static int[] FindClosestSeats(int x, int y, Matrix<char> matrix)
         {
             var c = matrix[x, y];
             if (c == '.' || c == '\0') return null;
@@ -217,7 +153,7 @@ namespace Day11
             return list.ToArray();
         }
 
-        private static bool IsCrowded(int[] adjacency, Matrix m, int threshold)
+        private static bool IsCrowded(int[] adjacency, Matrix<char> m, int threshold)
         {
             if (adjacency.Length < threshold) return false;
             int count = 0;
@@ -225,7 +161,7 @@ namespace Day11
             return count >= threshold;
         }
 
-        private static bool IsClear(int[] adjacency, Matrix m)
+        private static bool IsClear(int[] adjacency, Matrix<char> m)
         {
             foreach (var n in adjacency) if (m.Array[n] == '#') return false;
             return true;
