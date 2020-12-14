@@ -9,7 +9,7 @@ namespace Day13
     {
         static void Main(string[] args)
         {
-            //string sample = "939\n7,13,x,x,59,x,31,19";
+            string sample = "939\n7,13,x,x,59,x,31,19";
             string input = "1002392\n23,x,x,x,x,x,x,x,x,x,x,x,x,41,x,x,x,37,x,x,x,x,x,421,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,17,x,19,x,x,x,x,x,x,x,x,x,29,x,487,x,x,x,x,x,x,x,x,x,x,x,x,13";
 
             var lines = input.Split('\n');
@@ -19,10 +19,11 @@ namespace Day13
             int part1 = 0;
             long part2 = 0;
 
+            var t = Part2Clean(arr);
             Performance.TimeRun("Part 1 and 2", () =>
             {
                 part1 = Part1(earliest, arr);
-                part2 = Part2(arr);
+                part2 = Part2Clean(arr);
             }, 1000, 1000);
 
             Console.WriteLine($"Part 1: {part1}");
@@ -38,42 +39,19 @@ namespace Day13
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static long GetOffset(long t, long line)
+        private static long Part2Clean(int[] arr)
         {
-            var offset = line - (t % line);
-            if (offset == line) offset = 0;
-            return offset;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static long Part2(int[] arr)
-        {
-            int[] lines = arr.Where(i => i > 0).ToArray();
-            long[] desiredOffsets = new long[lines.Length];
-            desiredOffsets[0] = 0;
-            int lineNo = 1;
-            for (int pos = 1; pos < arr.Length; pos++)
-            {
-                int line = arr[pos];
-                if (line == -1) continue;
-                desiredOffsets[lineNo++] = pos % line;
-            }
-
-            long t = 0;
             long period = arr[0];
-
-            for (int i = 1; i < lines.Length; i++)
+            long t = 0;
+            for (int i = 1; i < arr.Length; i++)
             {
-                int line = lines[i];
-                long desiredOffset = desiredOffsets[i];
-                var offset = GetOffset(t, line);
-                while (offset != desiredOffset)
-                {
-                    t += period;
-                    offset = GetOffset(t, line);
-                }
+                if (arr[i] == -1) continue;
+                int line = arr[i];
+                var desiredRemainder = line - (i % line);
+                while (t % line != desiredRemainder) t += period;
                 period *= line;
             }
+
             return t;
         }
 

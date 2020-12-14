@@ -15,18 +15,18 @@ namespace Day12
             Performance.TimeRun("Read and solve part 1", () =>
             {
                 dist1 = Part1("input.txt");
-            }, 10, 100);
+            }, 100, 100);
 
             Performance.TimeRun("Read and solve part 2", () =>
             {
                 dist2 = Part2("input.txt");
-            }, 10, 100);
+            }, 100, 100);
 
             Performance.TimeRun("Read (twice) and solve both", () =>
             {
                 dist1 = Part1("input.txt");
                 dist2 = Part2("input.txt");
-            }, 100, 1000);
+            }, 100, 100);
 
             Console.WriteLine($"Part 1: {dist1}");
             Console.WriteLine($"Part 2: {dist2}");
