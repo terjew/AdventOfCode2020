@@ -32,6 +32,7 @@ namespace Day12
             Console.WriteLine($"Part 2: {dist2}");
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Part1(string path)
         {
             int x = 0;
@@ -91,6 +92,7 @@ namespace Day12
             return Math.Abs(x) + Math.Abs(y);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Part2(string path)
         {
             int dx = 10;
