@@ -9,9 +9,8 @@ namespace Utilities
 {
     public static class Performance
     {
-        public static void TimeRun(string what, Action a, int runs = 10, int loops = 100)
+        public static void TimeRun(string what, Action a, int runs = 10, int loops = 100, int warmupCount = 10)
         {
-            int warmupCount = 10;
             for (int i = 0; i < warmupCount; i++)
             {
                 a();
