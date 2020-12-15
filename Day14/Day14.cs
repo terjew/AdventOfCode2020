@@ -68,7 +68,7 @@ namespace Day14
             AndMask = 0;
             List<long> floatingBits = new List<long>();
             FloatingBitCombinations = new List<long>() { 0 };
-            long value = 0b100000000000000000000000000000000000;
+            long value = 1L<<35;
             foreach(char c in mask)
             {
                 if (Version == 1)
