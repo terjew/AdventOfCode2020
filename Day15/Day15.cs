@@ -9,48 +9,20 @@ namespace Day15
     {
         private static int CalculateSequence(int[] start, int count)
         {
-            (int, int)[] turnsSpoken = Enumerable.Repeat((-1, -1), count).ToArray();
-            for (int i = 0; i < start.Length; i++)
+            int[] roundSpoken = new int[count];
+            for (int i = 0; i < start.Length - 1; i++)
             {
                 var number = start[i];
-                var info = turnsSpoken[number];
-                if (info.Item1 == -1)
-                {
-                    info.Item1 = i;
-                }
-                else
-                {
-                    info.Item2 = i - info.Item1;
-                    info.Item1 = i;
-                }
-                turnsSpoken[number] = info;
+                roundSpoken[number] = i + 1;
             }
 
             int lastSpoken = start[start.Length - 1];
-            for (int i = start.Length; i < count; i++)
+            for (int lastTurn = start.Length ; lastTurn <= count -1; lastTurn++)
             {
-                var info = turnsSpoken[lastSpoken];
-                int diff = info.Item2;
-                if (diff > 0)
-                {
-                    lastSpoken = diff;
-                }
-                else
-                {
-                    lastSpoken = 0;
-                }
-                info = turnsSpoken[lastSpoken];
-                if (info.Item1 == -1)
-                {
-                    info.Item1 = i;
-                }
-                else
-                {
-                    info.Item2 = i - info.Item1;
-                    info.Item1 = i;
-                }
-                turnsSpoken[lastSpoken] = info;
-
+                var round = roundSpoken[lastSpoken];
+                int speak = (round > 0) ? lastTurn - round : 0;
+                roundSpoken[lastSpoken] = lastTurn;
+                lastSpoken = speak;
             }
             return lastSpoken;
         }
@@ -64,7 +36,7 @@ namespace Day15
             {
                 part1 = CalculateSequence(start, 2020);
                 part2 = CalculateSequence(start, 30000000);
-            },5, 1, 3);
+            },5, 3, 3);
             Console.WriteLine(part1);
             Console.WriteLine(part2);
         }
