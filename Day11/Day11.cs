@@ -29,7 +29,7 @@ namespace Day11
             Console.WriteLine($"Part2: {count2} seats end up occupied ({iter2} iterations)");
         }
 
-        static (int,int) SimulateWithAdjecency(Matrix<char> matrix, Func<int, int, Matrix<char>, int[]> adjacencyFunc = null, int crowdedThreshold = 4, bool output = false)
+        static (int,int) SimulateWithAdjecency(Matrix2D<char> matrix, Func<int, int, Matrix2D<char>, int[]> adjacencyFunc = null, int crowdedThreshold = 4, bool output = false)
         {
             if (adjacencyFunc == null) adjacencyFunc = FindImmediateNeighbours;
             int[] indices = new int[128*128];             //max 128*128
@@ -107,7 +107,7 @@ namespace Day11
             ( 1,  1),
         };
 
-        private static int[] FindImmediateNeighbours(int x, int y, Matrix<char> matrix)
+        private static int[] FindImmediateNeighbours(int x, int y, Matrix2D<char> matrix)
         {
             var c = matrix[x, y];
             if (c == '.' || c == '\0') return null;
@@ -127,7 +127,7 @@ namespace Day11
             return list.ToArray();
         }
 
-        private static int[] FindClosestSeats(int x, int y, Matrix<char> matrix)
+        private static int[] FindClosestSeats(int x, int y, Matrix2D<char> matrix)
         {
             var c = matrix[x, y];
             if (c == '.' || c == '\0') return null;
@@ -153,7 +153,7 @@ namespace Day11
             return list.ToArray();
         }
 
-        private static bool IsCrowded(int[] adjacency, Matrix<char> m, int threshold)
+        private static bool IsCrowded(int[] adjacency, Matrix2D<char> m, int threshold)
         {
             if (adjacency.Length < threshold) return false;
             int count = 0;
@@ -161,7 +161,7 @@ namespace Day11
             return count >= threshold;
         }
 
-        private static bool IsClear(int[] adjacency, Matrix<char> m)
+        private static bool IsClear(int[] adjacency, Matrix2D<char> m)
         {
             foreach (var n in adjacency) if (m.Array[n] == '#') return false;
             return true;

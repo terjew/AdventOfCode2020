@@ -6,7 +6,176 @@ using System.Threading.Tasks;
 
 namespace Utilities
 {
-    public class Matrix<T>
+    public class Matrix4D<T>
+    {
+        public readonly T[] Array;
+        public readonly int Width;
+        public readonly int Height;
+        public readonly int Depth;
+        public readonly int Wdim;
+
+        public T this[int x, int y, int z, int w]
+        {
+            get
+            {
+                return Array[w * Width * Height * Depth + z * Width * Height + y * Width + x];
+            }
+            set
+            {
+                Array[w * Width * Height * Depth + z * Width * Height + y * Width + x] = value;
+            }
+        }
+
+        public Matrix4D(int width, int height, int depth, int wdim, T[] array)
+        {
+            Width = width;
+            Height = height;
+            Depth = depth;
+            Wdim = wdim;
+            Array = array;
+        }
+
+        public Matrix4D(int width, int height, int depth, int wdim) : this(width, height, depth, wdim, new T[width * height * depth * wdim])
+        {
+        }
+
+        public Matrix4D(Matrix4D<T> other)
+        {
+            Array = (T[])other.Array.Clone();
+            Width = other.Width;
+            Height = other.Height;
+            Depth = other.Depth;
+            Wdim = other.Wdim;
+        }
+
+        public int GetIndex(int x, int y, int z, int w)
+        {
+            return w * Width * Height * Depth + z * Width * Height + y * Width + x;
+        }
+
+        public Matrix4D<T> Clone()
+        {
+            return new Matrix4D<T>(this);
+        }
+
+        public void CopyFrom(Matrix4D<T> other)
+        {
+            other.Array.CopyTo(Array, 0);
+        }
+
+        static Matrix4D()
+        {
+            Neighborhood = new (int, int, int, int)[80];
+            int i = 0;
+            for (int w = -1; w <= 1; w++)
+            {
+                for (int z = -1; z <= 1; z++)
+                {
+                    for (int y = -1; y <= 1; y++)
+                    {
+                        for (int x = -1; x <= 1; x++)
+                        {
+                            if (x == 0 && y == 0 && z == 0 && w == 0) continue;
+                            Neighborhood[i++] = (x, y, z, w);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static (int, int, int, int)[] Neighborhood;
+    }
+
+
+    public class Matrix3D<T>
+    {
+        public readonly T[] Array;
+        public readonly int Width;
+        public readonly int Height;
+        public readonly int Depth;
+
+        public T this[int x, int y, int z]
+        {
+            get
+            {
+                return Array[z * Width * Height + y * Width + x];
+            }
+            set
+            {
+                Array[z * Width * Height + y * Width + x] = value;
+            }
+        }
+
+        public Matrix3D(int width, int height, int depth, T[] array)
+        {
+            Width = width;
+            Height = height;
+            Depth = depth;
+            Array = array;
+        }
+
+        public Matrix3D(int width, int height, int depth) : this(width, height, depth, new T[width * height * depth])
+        {
+        }
+
+        public Matrix3D(Matrix3D<T> other)
+        {
+            Array = (T[])other.Array.Clone();
+            Width = other.Width;
+            Height = other.Height;
+            Depth = other.Depth;
+        }
+
+        public int GetIndex(int x, int y, int z)
+        {
+            return z * Width * Height + y * Width + x;
+        }
+
+        public Matrix3D<T> Clone()
+        {
+            return new Matrix3D<T>(this);
+        }
+
+        public void CopyFrom(Matrix3D<T> other)
+        {
+            other.Array.CopyTo(Array, 0);
+        }
+
+        public static (int, int, int)[] Neighborhood = new (int, int, int)[]
+        {
+            (-1, -1, -1),
+            ( 0, -1, -1),
+            ( 1, -1, -1),
+            (-1,  0, -1),
+            ( 0,  0, -1),
+            ( 1,  0, -1),
+            (-1,  1, -1),
+            ( 0,  1, -1),
+            ( 1,  1, -1),
+
+            (-1, -1,  0),
+            ( 0, -1,  0),
+            ( 1, -1,  0),
+            (-1,  0,  0),
+
+            ( 1,  0,  0),
+            (-1,  1,  0),
+            ( 0,  1,  0),
+            ( 1,  1,  0),
+
+            (-1, -1,  1),
+            ( 0, -1,  1),
+            ( 1, -1,  1),
+            (-1,  0,  1),
+            ( 0,  0,  1),
+            ( 1,  0,  1),
+            (-1,  1,  1),
+            ( 0,  1,  1),
+            ( 1,  1,  1),
+        };
+    }
+
+    public class Matrix2D<T>
     {
         public readonly T[] Array;
         public readonly int Width;
@@ -24,18 +193,18 @@ namespace Utilities
             }
         }
        
-        public Matrix(int width, int height, T[] array)
+        public Matrix2D(int width, int height, T[] array)
         {
             Width = width;
             Height = height;
             Array = array;
         }
 
-        public Matrix(int width, int height) : this(width, height, new T[width * height])
+        public Matrix2D(int width, int height) : this(width, height, new T[width * height])
         {            
         }
 
-        public Matrix(Matrix<T> other)
+        public Matrix2D(Matrix2D<T> other)
         {
             Array = (T[])other.Array.Clone();
             Width = other.Width;
@@ -47,23 +216,21 @@ namespace Utilities
             return y * Width + x;
         }
 
-        public Matrix<T> Clone()
+        public Matrix2D<T> Clone()
         {
-            return new Matrix<T>(this);
+            return new Matrix2D<T>(this);
         }
 
-        public void CopyFrom(Matrix<T> other)
+        public void CopyFrom(Matrix2D<T> other)
         {
             other.Array.CopyTo(Array, 0);
         }
-
-        
         
     }
 
     public static class MatrixFactory
     {
-        public static Matrix<char> BuildCharMatrix(List<string> input)
+        public static Matrix2D<char> BuildCharMatrix(List<string> input)
         {
             var width = input[0].Length;
             var height = input.Count;
@@ -78,22 +245,40 @@ namespace Utilities
                 }
                 lineptr += width;
             }
-            return new Matrix<char>(width, height, array);
+            return new Matrix2D<char>(width, height, array);
         }
     }
 
     public static class MatrixExtensions
-    {        
+    {
 
-        public static void Dump(this Matrix<char> charMatrix)
+        public static void Dump(this Matrix2D<char> charMatrix)
         {
             Console.WriteLine("**************************************");
             for (int i = 0; i < charMatrix.Height; i++)
             {
-                //FIXME: Use Span<char>
                 var str = new string(charMatrix.Array, charMatrix.Width * i, charMatrix.Width);
                 Console.WriteLine(str);
             }
         }
+
+        public static void DumpSlice(this Matrix3D<char> charMatrix, int z)
+        {
+            for (int i = 0; i < charMatrix.Height; i++)
+            {
+                var str = new string(charMatrix.Array, z * charMatrix.Height * charMatrix.Width + charMatrix.Width * i, charMatrix.Width);
+                Console.WriteLine(str);
+            }
+        }
+
+        public static void DumpSlice(this Matrix4D<char> charMatrix, int z, int w)
+        {
+            for (int i = 0; i < charMatrix.Height; i++)
+            {
+                var str = new string(charMatrix.Array, w * charMatrix.Depth * charMatrix.Height * charMatrix.Width + z * charMatrix.Height * charMatrix.Width + charMatrix.Width * i, charMatrix.Width);
+                Console.WriteLine(str);
+            }
+        }
+
     }
 }
