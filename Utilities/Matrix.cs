@@ -247,9 +247,9 @@ namespace Utilities
 
     }
 
-    public static class MatrixFactory
+    public static class CharMatrix
     {
-        public static Matrix2D<char> BuildCharMatrix(List<string> input)
+        public static Matrix2D<char> Build(List<string> input)
         {
             var width = input[0].Length;
             var height = input.Count;
@@ -266,19 +266,41 @@ namespace Utilities
             }
             return new Matrix2D<char>(width, height, array);
         }
-    }
 
-    public static class MatrixExtensions
-    {
+        public static ConsoleColor[] DefaultColorMap()
+        {
+            return Enumerable.Repeat(ConsoleColor.Gray, 256).ToArray();
+        }
+
+        public static void DumpColor(this Matrix2D<char> charMatrix, ConsoleColor[] foregroundMap)
+        {
+            Console.WriteLine(new string('*', charMatrix.Width + 2));
+            var defaultColor = Console.ForegroundColor;
+            for (int i = 0; i < charMatrix.Height; i++)
+            {
+                Console.Write("*");
+                var str = new string(charMatrix.Array, charMatrix.Width * i, charMatrix.Width);
+                foreach (var c in str)
+                {
+                    Console.ForegroundColor = foregroundMap[c];
+                    Console.Write(c);
+                }
+                Console.ForegroundColor = defaultColor;
+                Console.WriteLine("*");
+            }
+            Console.WriteLine(new string('*', charMatrix.Width + 2));
+        }
+
 
         public static void Dump(this Matrix2D<char> charMatrix)
         {
-            Console.WriteLine("**************************************");
+            Console.WriteLine(new string('*', charMatrix.Width + 2));
             for (int i = 0; i < charMatrix.Height; i++)
             {
                 var str = new string(charMatrix.Array, charMatrix.Width * i, charMatrix.Width);
-                Console.WriteLine(str);
+                Console.WriteLine("*" + str + "*");
             }
+            Console.WriteLine(new string('*', charMatrix.Width + 2));
         }
 
         public static void DumpSlice(this Matrix3D<char> charMatrix, int z)

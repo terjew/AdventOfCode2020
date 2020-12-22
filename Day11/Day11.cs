@@ -20,7 +20,7 @@ namespace Day11
             Performance.TimeRun("part1 + 2 (with IO)", () =>
             {
                 var input = TextFile.ReadStringList("input.txt");
-                var matrix = MatrixFactory.BuildCharMatrix(input);
+                var matrix = CharMatrix.Build(input);
                 var original = matrix.Clone();
                 (count1, iter1) = SimulateWithAdjecency(matrix);
                 (count2, iter2) = SimulateWithAdjecency(original, adjacencyFunc: FindClosestSeats, crowdedThreshold: 5);
