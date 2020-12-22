@@ -192,7 +192,7 @@ namespace Utilities
                 Array[y * Width + x] = value;
             }
         }
-       
+
         public Matrix2D(int width, int height, T[] array)
         {
             Width = width;
@@ -201,7 +201,7 @@ namespace Utilities
         }
 
         public Matrix2D(int width, int height) : this(width, height, new T[width * height])
-        {            
+        {
         }
 
         public Matrix2D(Matrix2D<T> other)
@@ -225,7 +225,26 @@ namespace Utilities
         {
             other.Array.CopyTo(Array, 0);
         }
-        
+
+        public T[] ReadRow(int y)
+        {
+            int index = GetIndex(0, y);
+            var arr = new T[Width];
+            System.Array.Copy(Array, index, arr, 0, Width);
+            return arr;
+        }
+
+        public T[] ReadColumn(int x)
+        {
+            int index = GetIndex(x, 0);
+            var arr = new T[Height];
+            for (int y = 0; y < Height; y++)
+            {
+                arr[y] = Array[index + y * Width];
+            }
+            return arr;
+        }
+
     }
 
     public static class MatrixFactory
